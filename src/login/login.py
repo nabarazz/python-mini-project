@@ -1,96 +1,42 @@
-from datetime import datetime
+import json
+import sys
+import os
 
+def read_user_credentials():
+    try:
+        with open('api/json/login.json', 'r') as user_file:
+            return json.load(user_file)
+    except FileNotFoundError:
+        print("File not found: api/json/login.json")
+        return None
+
+def get_user_input():
+    if not sys.stdin.isatty():
+        # Running in non-interactive mode (e.g., Docker)
+        print("Non-interactive mode: Using environment variables if available.")
+        username = os.getenv("DOCKER_USERNAME", "default_username")
+        password = os.getenv("DOCKER_PASSWORD", "default_password")
+        return username, password
+
+    username = input("Enter username: ")
+    password = input("Enter password: ")
+    return username, password
 
 def login():
-    print("please enter your username")
-    user_nm = input("Enter here: ")
-    pssd_wr = (input("enter the password"))+'\n'
-    try:
-        usernm = user_nm+" task.txt"
-        f_ = open(usernm, 'r')
+    username, password = get_user_input()
 
-        k = f_.readlines(0)[0]
-        f_.close()
+    if username == "default_username" and password == "default_password":
+        print("Using default credentials.")
+    else:
+        print(f"Entered username: {username}")
+        print(f"Entered password: {password}")
 
-        if pssd_wr == k:
-            print("1--to view your data \n2--To add task \n3--Update\
-                task status \n4--View task status")
-            a = input()
+    user_credentials = read_user_credentials()
 
-            if a == '1':
-                view_data(user_nm)
-            elif a == '2':
-                task_information(user_nm)
-            elif a == '3':
-                task_update(user_nm)
-            elif a == '4':
-                task_update_viewer(user_nm)
-            else:
-                print("wrong input")
-
+    if user_credentials:
+        if user_credentials['login']['username'] == username and user_credentials['login']['password'] == password:
+            print("Login successful")
         else:
-            print("SIR YOUR PASSWORD OR USERNAME IS WRONG , Plz enter Again")
-            login()
-    except Exception as e:
-        print(e)
-        login()
-
-def view_data(username):
-    ff = open(username, 'r')
-    print(ff.read())
-    ff.close()
-
-def task_information(username):
-    print("Sir enter n.o of task you want to ADD")
-    j = int(input())
-    f1 = open(username, 'a')
-    for i in range(1, j+1):
-        task = input("enter the task")
-        target = input("enter the target")
-        pp = "TASK "+str(i)+" :"
-        qq = "TARGET "+str(i)+" :"
-
-        f1.write(pp)
-        f1.write(task)
-        f1.write('\n')
-        f1.write(qq)
-        f1.write(target)
-        f1.write('\n')
-
-        print("Do u want to stop press space bar otherwise enter")
-        s = input()
-        if s == ' ':
-            break
-    f1.close
-
-def task_update(username):
-    username = username+" TASK.txt"
-    print("Please enter the tasks which are completed ")
-     
-    task_completed = input()
-    print("Enter task which are still not started by you")
-     
-    task_not_started = input()
-    print("Enter task which you are doing")
-     
-    task_ongoing = input()
-    fw = open(username, 'a')
-    DT = str(datetime.datetime.now())
-     
-    fw.write(DT)
-    fw.write("\n")
-    fw.write("COMPLETED TASK \n")
-    fw.write(task_completed)
-    fw.write("\n")
-    fw.write("ONGOING TASK \n")
-    fw.write(task_ongoing)
-    fw.write("\n")
-    fw.write("NOT YET STARTED\n")
-    fw.write(task_not_started)
-    fw.write("\n")
-
-def task_update_viewer(username):
-    ussnm = username+" TASK.txt"
-    o = open(ussnm, 'r')
-    print(o.read())
-    o.close()
+            print("Login failed. Check your username and password.")
+    else:
+        print("Cannot perform login due to missing credentials.")
