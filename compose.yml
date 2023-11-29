@@ -1,0 +1,28 @@
+version: '3'
+
+services:
+  postgres-db:
+    build:
+      context: ./db
+      dockerfile: Dockerfile
+    environment:
+      POSTGRES_DB: mydatabase
+      POSTGRES_USER: myuser
+      POSTGRES_PASSWORD: mypassword
+    ports:
+      - "5432:5432"
+
+  python-app:
+    build:
+      context: ./python
+      dockerfile: Dockerfile
+    volumes:
+      - ./python:/app/src
+    depends_on:
+      - postgres-db
+    environment:
+      - DB_HOST=localhost
+      - DB_PORT=5432
+      - DB_NAME=mydatabase
+      - DB_USER=myuser
+      - DB_PASSWORD=mypassword

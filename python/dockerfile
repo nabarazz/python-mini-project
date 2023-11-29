@@ -1,6 +1,7 @@
 FROM python:3.10
-WORKDIR /home/dell/dbpython
+WORKDIR /home/dell/dbpython/python
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install SQLAlchemy psycopg2-binary
 COPY . .
 CMD ["python3", "src/login/__main__.py"]
