@@ -1,4 +1,0 @@
-admin
-Name: n
-Address :b
-Age :4
