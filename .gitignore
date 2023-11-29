@@ -1,0 +1,18 @@
+# python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# virtual environment
+/.venv/
+
+# PostgreSQL
+db/pg_hba.conf
+
+# Docker Compose
+docker-compose.override.yml
+docker-compose.override.yaml
+
+# Nabrazz task
+nabrazz\ task.txt
